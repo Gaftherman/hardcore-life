@@ -105,6 +105,7 @@ public:
 	virtual unsigned int	Size( const char *pFileName ) = 0;
 
 	virtual long			GetFileTime( const char *pFileName ) = 0;
+	virtual int GetFileModificationTime(const char* pFileName) = 0;
 	virtual void			FileTimeToString( char* pStrip, int maxCharsIncludingTerminator, long fileTime ) = 0;
 
 	virtual bool			IsOk( FileHandle_t file ) = 0;
@@ -178,6 +179,8 @@ public:
 	virtual FileHandle_t	OpenFromCacheForRead( const char *pFileName, const char *pOptions, const char *pathID = 0L ) = 0;
 
 	virtual void			AddSearchPathNoWrite( const char *pPath, const char *pathID ) = 0;
+
+	// More functions here, wait for Valve to release new SDK
 };
 
 // Steam3/Src compat

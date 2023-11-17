@@ -1,5 +1,13 @@
 # Half-Life Updated changelog
 
+## Changes in V1.0.0 Release Candidate 004
+
+> Note: this release candidate has not been released yet.
+
+### Bug fixes
+
+* Updated IFileSystem interface to include new API functions from the 25th anniversary version
+
 ## Changes in V1.0.0 Release Candidate 003
 
 ### Bug fixes

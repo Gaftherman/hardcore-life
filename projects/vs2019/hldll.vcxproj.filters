@@ -318,6 +318,9 @@
     <ClCompile Include="..\..\dlls\triggers.cpp">
       <Filter>Source Files\dlls</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\dlls\checkpoint.cpp">
+      <Filter>Source Files\dlls</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\dlls\tripmine.cpp">
       <Filter>Source Files\dlls</Filter>
     </ClCompile>

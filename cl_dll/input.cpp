@@ -21,6 +21,7 @@
 #include "vgui_TeamFortressViewport.h"
 #include "filesystem_utils.h"
 
+#include "discord_manager.h"
 
 extern bool g_iAlive;
 
@@ -61,6 +62,8 @@ cvar_t* cl_yawspeed;
 cvar_t* cl_pitchspeed;
 cvar_t* cl_anglespeedkey;
 cvar_t* cl_vsmoothing;
+cvar_t* rpc_chapter;
+cvar_t* rpc_skill;
 /*
 ===============================================================================
 
@@ -989,6 +992,9 @@ void InitInput()
 	m_forward = gEngfuncs.pfnRegisterVariable("m_forward", "1", FCVAR_ARCHIVE);
 	m_side = gEngfuncs.pfnRegisterVariable("m_side", "0.8", FCVAR_ARCHIVE);
 
+	rpc_chapter = gEngfuncs.pfnRegisterVariable("rpc_chapter", "In main menu", FCVAR_CLIENTDLL);
+	rpc_skill = gEngfuncs.pfnRegisterVariable("rpc_skill", "", FCVAR_CLIENTDLL);
+
 	// Initialize third person camera controls.
 	CAM_Init();
 	// Initialize inputs
@@ -997,6 +1003,8 @@ void InitInput()
 	KB_Init();
 	// Initialize view system
 	V_Init();
+
+	DiscordMan_Startup();
 }
 
 /*
@@ -1016,6 +1024,8 @@ void CL_UnloadParticleMan();
 
 void DLLEXPORT HUD_Shutdown()
 {
+	gEngfuncs.Con_Printf("Shutting down Discord RPC");
+	DiscordMan_Kill();
 	//	RecClShutdown();
 
 	ShutdownInput();

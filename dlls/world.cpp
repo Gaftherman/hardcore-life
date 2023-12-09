@@ -689,6 +689,9 @@ void CWorld::Precache()
 	{
 		CVAR_SET_FLOAT("mp_defaultteam", 0);
 	}
+
+	CVAR_SET_STRING( "rpc_chapter", !FStringNull( pev->message ) ? STRING( pev->message) : "" );
+	CVAR_SET_STRING( "rpc_skill", ( gSkillData.iSkillLevel == 1 ? "Hard" : gSkillData.iSkillLevel == 2 ? "Extreme" : "Impossible" ) );
 }
 
 

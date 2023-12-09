@@ -2628,6 +2628,10 @@
 	wait(integer) : "Delay before reset" : 10
 ]
 
+@PointClass base(Targetname, Target) studio("models/checkpoint.mdl") size( -32 -32 -32, 32 32 32 ) = checkpoint : "CheckPoint" 
+[
+]
+
 @SolidClass base(Trigger) = trigger_once : "Trigger: Activate once" []
 
 @SolidClass base(Trigger, Angles) = trigger_push : "Trigger player push"

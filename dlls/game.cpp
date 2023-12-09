@@ -452,6 +452,25 @@ cvar_t sk_player_leg1 = {"sk_player_leg1", "1"};
 cvar_t sk_player_leg2 = {"sk_player_leg2", "1"};
 cvar_t sk_player_leg3 = {"sk_player_leg3", "1"};
 
+cvar_t sk_player_health1 = {"sk_player_health1", "100"};
+cvar_t sk_player_health2 = {"sk_player_health2", "100"};
+cvar_t sk_player_health3 = {"sk_player_health3", "100"};
+
+cvar_t sk_player_armor1 = {"sk_player_armor1", "100"};
+cvar_t sk_player_armor2 = {"sk_player_armor2", "100"};
+cvar_t sk_player_armor3 = {"sk_player_armor3", "100"};
+
+cvar_t sk_barnacle_health1 = {"sk_barnacle_health1", "30"};
+cvar_t sk_barnacle_health2 = {"sk_barnacle_health2", "30"};
+cvar_t sk_barnacle_health3 = {"sk_barnacle_health3", "30"};
+
+cvar_t sk_barnacle_speed1 = {"sk_barnacle_speed1", "8"};
+cvar_t sk_barnacle_speed2 = {"sk_barnacle_speed2", "8"};
+cvar_t sk_barnacle_speed3 = {"sk_barnacle_speed3", "8"};
+
+cvar_t sk_checkpoint_health1 = {"sk_checkpoint_health1", "1"};
+cvar_t sk_checkpoint_health2 = {"sk_checkpoint_health2", "1"};
+cvar_t sk_checkpoint_health3 = {"sk_checkpoint_health3", "1"};
 // END Cvars for Skill Level settings
 
 // Register your console variables here
@@ -902,6 +921,22 @@ void GameDLLInit()
 	CVAR_REGISTER(&sk_player_leg1);
 	CVAR_REGISTER(&sk_player_leg2);
 	CVAR_REGISTER(&sk_player_leg3);
+
+	CVAR_REGISTER(&sk_player_health1);
+	CVAR_REGISTER(&sk_player_health2);
+	CVAR_REGISTER(&sk_player_health3);
+	CVAR_REGISTER(&sk_player_armor1);
+	CVAR_REGISTER(&sk_player_armor2);
+	CVAR_REGISTER(&sk_player_armor3);
+	CVAR_REGISTER(&sk_barnacle_health1);
+	CVAR_REGISTER(&sk_barnacle_health2);
+	CVAR_REGISTER(&sk_barnacle_health3);
+	CVAR_REGISTER(&sk_barnacle_speed1);
+	CVAR_REGISTER(&sk_barnacle_speed2);
+	CVAR_REGISTER(&sk_barnacle_speed3);
+	CVAR_REGISTER(&sk_checkpoint_health1);
+	CVAR_REGISTER(&sk_checkpoint_health2);
+	CVAR_REGISTER(&sk_checkpoint_health3);
 	// END REGISTER CVARS FOR SKILL LEVEL STUFF
 
 	InitMapLoadingUtils();

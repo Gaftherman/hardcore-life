@@ -137,6 +137,12 @@ struct skilldata_t
 	float plrStomach;
 	float plrLeg;
 	float plrArm;
+
+	float CheckPointHealth;
+	float plrHealth;
+	float plrArmor;
+	float BarnacleHealth;
+	float BarnacleSpeed;
 };
 
 inline DLL_GLOBAL skilldata_t gSkillData;

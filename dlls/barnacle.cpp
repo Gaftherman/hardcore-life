@@ -23,7 +23,6 @@
 #include "schedule.h"
 
 #define BARNACLE_BODY_HEIGHT 44 // how 'tall' the barnacle's model is.
-#define BARNACLE_PULL_SPEED 8
 #define BARNACLE_KILL_VICTIM_DELAY 5 // how many seconds after pulling prey in to gib them.
 
 //=========================================================
@@ -112,7 +111,7 @@ void CBarnacle::Spawn()
 	pev->takedamage = DAMAGE_AIM;
 	m_bloodColor = BLOOD_COLOR_RED;
 	pev->effects = EF_INVLIGHT; // take light from the ceiling
-	pev->health = 25;
+	pev->health = gSkillData.BarnacleHealth;
 	m_flFieldOfView = 0.5; // indicates the width of this monster's forward view cone ( as a dotproduct result )
 	m_MonsterState = MONSTERSTATE_NONE;
 	m_flKillVictimTime = 0;
@@ -181,8 +180,8 @@ void CBarnacle::BarnacleThink()
 			vecNewEnemyOrigin.x -= 6 * cos(m_hEnemy->pev->angles.y * M_PI / 180.0);
 			vecNewEnemyOrigin.y -= 6 * sin(m_hEnemy->pev->angles.y * M_PI / 180.0);
 
-			m_flAltitude -= BARNACLE_PULL_SPEED;
-			vecNewEnemyOrigin.z += BARNACLE_PULL_SPEED;
+			m_flAltitude -= gSkillData.BarnacleSpeed;
+			vecNewEnemyOrigin.z += gSkillData.BarnacleSpeed;
 
 			if (fabs(pev->origin.z - (vecNewEnemyOrigin.z + m_hEnemy->pev->view_ofs.z - 8)) < BARNACLE_BODY_HEIGHT)
 			{
@@ -308,7 +307,7 @@ void CBarnacle::BarnacleThink()
 			if (m_flAltitude < flLength)
 			{
 				// if tongue is higher than is should be, lower it kind of slowly.
-				m_flAltitude += BARNACLE_PULL_SPEED;
+				m_flAltitude += gSkillData.BarnacleSpeed;
 				m_fTongueExtended = false;
 			}
 			else

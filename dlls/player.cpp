@@ -2792,12 +2792,13 @@ void CBasePlayer::Spawn()
 		}};
 
 	pev->classname = MAKE_STRING("player");
-	pev->health = 100;
-	pev->armorvalue = 0;
+	pev->max_health = gSkillData.plrHealth;
+	pev->health = pev->max_health;
+	pev->armortype = gSkillData.plrArmor;
+	pev->armorvalue = pev->armortype;
 	pev->takedamage = DAMAGE_AIM;
 	pev->solid = SOLID_SLIDEBOX;
 	pev->movetype = MOVETYPE_WALK;
-	pev->max_health = pev->health;
 	pev->flags &= FL_PROXY | FL_FAKECLIENT; // keep proxy and fakeclient flags set by engine
 	pev->flags |= FL_CLIENT;
 	pev->air_finished = gpGlobals->time + 12;

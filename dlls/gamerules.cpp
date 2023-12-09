@@ -362,6 +362,18 @@ void CGameRules::RefreshSkillData()
 	gSkillData.plrStomach = GetSkillCvar("sk_player_stomach");
 	gSkillData.plrLeg = GetSkillCvar("sk_player_leg");
 	gSkillData.plrArm = GetSkillCvar("sk_player_arm");
+
+	// Ammount of times that a checkpoint can be used
+	gSkillData.CheckPointHealth = GetSkillCvar("sk_checkpoint_health");
+
+	// Player max_health
+	gSkillData.plrHealth = GetSkillCvar("sk_player_health");
+	// Player armor
+	gSkillData.plrArmor = GetSkillCvar("sk_player_armor");
+	// barnacle max_health
+	gSkillData.BarnacleHealth = GetSkillCvar("sk_barnacle_health");
+	// barnacle speed
+	gSkillData.BarnacleSpeed = GetSkillCvar("sk_barnacle_speed");
 }
 
 //=========================================================

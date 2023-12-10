@@ -1921,6 +1921,27 @@ void CBasePlayer::PreThink()
 	{
 		pev->velocity = g_vecZero;
 	}
+
+	if( FBitSet( pev->effects, EF_NIGHTVISION ) && pev->armortype > 0 )
+	{
+		UTIL_ScreenFade( this, Vector( 0, 255, 0 ), 0.1f, 0.0f, 255, FFADE_IN | FFADE_MODULATE );
+
+		MESSAGE_BEGIN(MSG_ONE, SVC_TEMPENTITY, NULL, pev );
+			WRITE_BYTE(TE_DLIGHT);
+			WRITE_COORD( pev->origin.x );	// X
+			WRITE_COORD( pev->origin.y );	// Y
+			WRITE_COORD( pev->origin.z );	// Z
+			WRITE_BYTE( 255 );				// radius * 0.1
+			WRITE_BYTE( 255 );				// r
+			WRITE_BYTE( 255 );				// g
+			WRITE_BYTE( 255 );				// b
+			WRITE_BYTE( 2 );				// time * 10
+			WRITE_BYTE( 2 );				// decay * 0.1
+		MESSAGE_END();
+
+		if( m_fNightVision > 0 )
+			m_fNightVision--;
+	}
 }
 /* Time based Damage works as follows: 
 	1) There are several types of timebased damage:
@@ -3330,6 +3351,28 @@ void CBasePlayer::FlashlightTurnOff()
 }
 
 /*
+	-Mikk Toggles the night vision
+*/
+void CBasePlayer::NightVisionToggle()
+{
+	if( m_fNightVision > 0 )
+		return;
+	
+	if( FBitSet( pev->effects, EF_NIGHTVISION ) )
+	{
+		EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "player/glass1.wav", 1.0, ATTN_NORM, 0, PITCH_NORM);
+		ClearBits( pev->effects, EF_NIGHTVISION );
+	}
+	else
+	{
+		EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "player/glass2.wav", 1.0, ATTN_NORM, 0, PITCH_NORM);
+		SetBits( pev->effects, EF_NIGHTVISION );
+	}
+
+	m_fNightVision = gpGlobals->time + 0.5f;
+}
+
+/*
 ===============
 ForceClientDllUpdate
 
@@ -3412,6 +3455,10 @@ void CBasePlayer::ImpulseCommands()
 		{
 			FlashlightTurnOn();
 		}
+		break;
+
+	case 108:
+		NightVisionToggle();
 		break;
 
 	case 201: // paint decal

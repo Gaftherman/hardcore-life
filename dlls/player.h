@@ -87,6 +87,7 @@ enum sbar_data
 class CBasePlayer : public CBaseMonster
 {
 public:
+	float m_fNightVision;
 	// Spectator camera
 	void Observer_FindNextPlayer(bool bReverse);
 	void Observer_HandleButtons();
@@ -260,6 +261,7 @@ public:
 	bool FlashlightIsOn();
 	void FlashlightTurnOn();
 	void FlashlightTurnOff();
+	void NightVisionToggle();
 
 	void UpdatePlayerSound();
 	void DeathSound() override;

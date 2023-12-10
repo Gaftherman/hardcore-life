@@ -1031,6 +1031,10 @@ void ClientPrecache()
 
 	if (giPrecacheGrunt)
 		UTIL_PrecacheOther("monster_human_grunt");
+
+	// -Mikk Precaches Night vision sounds
+	PRECACHE_SOUND( "player/glass1.wav" );
+	PRECACHE_SOUND( "player/glass2.wav" );
 }
 
 /*

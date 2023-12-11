@@ -13,9 +13,9 @@
 *
 ****/
 //
-// flashlight.cpp
+// nightvision.cpp
 //
-// implementation of CHudFlashlight class
+// implementation of CHudNightvision class
 //
 
 #include "hud.h"
@@ -25,18 +25,18 @@
 #include <string.h>
 #include <stdio.h>
 
-DECLARE_MESSAGE(m_Flash, FlashBat)
-DECLARE_MESSAGE(m_Flash, Flashlight)
+DECLARE_MESSAGE(m_Night, NightBat)
+DECLARE_MESSAGE(m_Night, Nightvision)
 
-#define BAT_NAME "sprites/%d_Flashlight.spr"
+#define BAT_NAME "sprites/%d_Nightvision.spr"
 
-bool CHudFlashlight::Init()
+bool CHudNightvision::Init()
 {
 	m_fFade = 0;
 	m_fOn = false;
 
-	HOOK_MESSAGE(Flashlight);
-	HOOK_MESSAGE(FlashBat);
+	HOOK_MESSAGE(Nightvision);
+	HOOK_MESSAGE(NightBat);
 
 	m_iFlags |= HUD_ACTIVE;
 
@@ -45,17 +45,19 @@ bool CHudFlashlight::Init()
 	return true;
 }
 
-void CHudFlashlight::Reset()
+void CHudNightvision::Reset()
 {
 	m_fFade = 0;
 	m_fOn = false;
 }
 
-bool CHudFlashlight::VidInit()
+bool CHudNightvision::VidInit()
 {
 	int HUD_flash_empty = gHUD.GetSpriteIndex("flash_empty");
 	int HUD_flash_full = gHUD.GetSpriteIndex("flash_full");
 	int HUD_flash_beam = gHUD.GetSpriteIndex("flash_beam");
+
+	m_hNightvision = LoadSprite("sprites/of_nv_b.spr");
 
 	m_hSprite1 = gHUD.GetSprite(HUD_flash_empty);
 	m_hSprite2 = gHUD.GetSprite(HUD_flash_full);
@@ -68,7 +70,7 @@ bool CHudFlashlight::VidInit()
 	return true;
 }
 
-bool CHudFlashlight::MsgFunc_FlashBat(const char* pszName, int iSize, void* pbuf)
+bool CHudNightvision::MsgFunc_NightBat(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	int x = READ_BYTE();
@@ -78,7 +80,7 @@ bool CHudFlashlight::MsgFunc_FlashBat(const char* pszName, int iSize, void* pbuf
 	return true;
 }
 
-bool CHudFlashlight::MsgFunc_Flashlight(const char* pszName, int iSize, void* pbuf)
+bool CHudNightvision::MsgFunc_Nightvision(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	m_fOn = READ_BYTE() != 0;
@@ -89,56 +91,46 @@ bool CHudFlashlight::MsgFunc_Flashlight(const char* pszName, int iSize, void* pb
 	return true;
 }
 
-bool CHudFlashlight::Draw(float flTime)
+bool CHudNightvision::Draw(float flTime)
 {
 	if ((gHUD.m_iHideHUDDisplay & (HIDEHUD_FLASHLIGHT | HIDEHUD_ALL)) != 0)
 		return true;
 
-	int r, g, b, x, y, a;
-	Rect rc;
-
-	if (!gHUD.HasSuit())
-		return true;
-
 	if (m_fOn)
-		a = 225;
-	else
-		a = MIN_ALPHA;
-
-	if (m_flBat < 0.20)
-		UnpackRGB(r, g, b, RGB_REDISH);
-	else
-		UnpackRGB(r, g, b, RGB_YELLOWISH);
-
-	ScaleColors(r, g, b, a);
-
-	y = (m_prc1->bottom - m_prc2->top) / 2;
-	x = ScreenWidth - m_iWidth - m_iWidth / 2;
-
-	// Draw the flashlight casing
-	SPR_Set(m_hSprite1, r, g, b);
-	SPR_DrawAdditive(0, x, y, m_prc1);
-
-	if (m_fOn)
-	{ // draw the flashlight beam
-		x = ScreenWidth - m_iWidth / 2;
-
-		SPR_Set(m_hBeam, r, g, b);
-		SPR_DrawAdditive(0, x, y, m_prcBeam);
-	}
-
-	// draw the flashlight energy level
-	x = ScreenWidth - m_iWidth - m_iWidth / 2;
-	int iOffset = m_iWidth * (1.0 - m_flBat);
-	if (iOffset < m_iWidth)
 	{
-		rc = *m_prc2;
-		rc.left += iOffset;
+		static int lastFrame = 0;
 
-		SPR_Set(m_hSprite2, r, g, b);
-		SPR_DrawAdditive(0, x + iOffset, y, &rc);
+		auto frameIndex = rand() % gEngfuncs.pfnSPR_Frames(m_hNightvision);
+
+		if (frameIndex == lastFrame)
+			frameIndex = (frameIndex + 1) % gEngfuncs.pfnSPR_Frames(m_hNightvision);
+
+		lastFrame = frameIndex;
+
+		if (0 != m_hNightvision)
+		{
+			const auto width = gEngfuncs.pfnSPR_Width(m_hNightvision, 0);
+			const auto height = gEngfuncs.pfnSPR_Height(m_hNightvision, 0);
+
+			gEngfuncs.pfnSPR_Set(m_hNightvision, 41, 114, 51);
+
+			Rect drawingRect;
+
+			for (auto x = 0; x < gHUD.m_scrinfo.iWidth; x += width)
+			{
+				drawingRect.left = 0;
+				drawingRect.right = x + width >= gHUD.m_scrinfo.iWidth ? gHUD.m_scrinfo.iWidth - x : width;
+
+				for (auto y = 0; y < gHUD.m_scrinfo.iHeight; y += height)
+				{
+					drawingRect.top = 0;
+					drawingRect.bottom = y + height >= gHUD.m_scrinfo.iHeight ? gHUD.m_scrinfo.iHeight - y : height;
+
+					gEngfuncs.pfnSPR_DrawAdditive(frameIndex, x, y, &drawingRect);
+				}
+			}
+		}
 	}
-
 
 	return true;
 }

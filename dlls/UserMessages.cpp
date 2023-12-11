@@ -31,6 +31,8 @@ void LinkUserMessages()
 	gmsgGeigerRange = REG_USER_MSG("Geiger", 1);
 	gmsgFlashlight = REG_USER_MSG("Flashlight", 2);
 	gmsgFlashBattery = REG_USER_MSG("FlashBat", 1);
+	gmsgNightvision = REG_USER_MSG("Nightvision", 2);
+	gmsgNightBattery = REG_USER_MSG("NightBat", 1);
 	gmsgHealth = REG_USER_MSG("Health", 2);
 	gmsgDamage = REG_USER_MSG("Damage", 12);
 	gmsgBattery = REG_USER_MSG("Battery", 2);

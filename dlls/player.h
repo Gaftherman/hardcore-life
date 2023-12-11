@@ -59,6 +59,9 @@
 #define SOUND_FLASHLIGHT_ON "items/flashlight1.wav"
 #define SOUND_FLASHLIGHT_OFF "items/flashlight1.wav"
 
+#define SOUND_NIGHTVISION_ON "items/flashlight1.wav"
+#define SOUND_NIGHTVISION_OFF "items/flashlight1.wav"
+
 #define TEAM_NAME_LENGTH 16
 
 typedef enum
@@ -87,7 +90,6 @@ enum sbar_data
 class CBasePlayer : public CBaseMonster
 {
 public:
-	float m_fNightVision;
 	// Spectator camera
 	void Observer_FindNextPlayer(bool bReverse);
 	void Observer_HandleButtons();
@@ -111,6 +113,9 @@ public:
 
 	float m_flFlashLightTime; // Time until next battery draw/Recharge
 	int m_iFlashBattery;	  // Flashlight Battery Draw
+
+	float m_flNightVisionTime; // Time until next battery draw/Recharge
+	int m_iNightBattery;	  // Nightvision Battery Draw
 
 	int m_afButtonLast;
 	int m_afButtonPressed;
@@ -258,10 +263,14 @@ public:
 	int ObjectCaps() override { return CBaseMonster::ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
 	void Precache() override;
 	bool IsOnLadder();
+	//Flashlight
 	bool FlashlightIsOn();
 	void FlashlightTurnOn();
 	void FlashlightTurnOff();
-	void NightVisionToggle();
+	//Nightvision
+	bool NightvisionIsOn();
+	void NightvisionTurnOn();
+	void NightvisionTurnOff();
 
 	void UpdatePlayerSound();
 	void DeathSound() override;

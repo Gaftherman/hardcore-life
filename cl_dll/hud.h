@@ -339,7 +339,6 @@ private:
 	int m_iHeight; // width of the battery innards
 };
 
-
 //
 //-----------------------------------------------------
 //
@@ -365,6 +364,35 @@ private:
 	bool m_fOn;
 	float m_fFade;
 	int m_iWidth; // width of the battery innards
+};
+
+//
+//-----------------------------------------------------
+//
+class CHudNightvision : public CHudBase
+{
+public:
+	bool Init() override;
+	bool VidInit() override;
+	bool Draw(float flTime) override;
+	void Reset() override;
+	bool MsgFunc_Nightvision(const char* pszName, int iSize, void* pbuf);
+	bool MsgFunc_NightBat(const char* pszName, int iSize, void* pbuf);
+
+private:
+	HSPRITE m_hSprite1;
+	HSPRITE m_hSprite2;
+	HSPRITE m_hBeam;
+	HSPRITE m_hNightvision;
+	Rect* m_prc1;
+	Rect* m_prc2;
+	Rect* m_prcBeam;
+	float m_flBat;
+	int m_iBat;
+	bool m_fOn;
+	float m_fFade;
+	int m_iWidth; // width of the battery innards
+
 };
 
 //
@@ -563,6 +591,7 @@ public:
 	CHudBattery m_Battery;
 	CHudTrain m_Train;
 	CHudFlashlight m_Flash;
+	CHudNightvision m_Night;
 	CHudMessage m_Message;
 	CHudStatusBar m_StatusBar;
 	CHudDeathNotice m_DeathNotice;
@@ -601,7 +630,6 @@ public:
 
 	// sprite indexes
 	int m_HUD_number_0;
-
 
 	void AddHudElem(CHudBase* p);
 

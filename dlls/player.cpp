@@ -59,11 +59,17 @@ extern edict_t* EntSelectSpawnPoint(CBaseEntity* pPlayer);
 #define FLASH_DRAIN_TIME 1.2  //100 units/3 minutes
 #define FLASH_CHARGE_TIME 0.2 // 100 units/20 seconds  (seconds per unit)
 
+#define NIGHT_DRAIN_TIME 1.2  // 100 units/3 minutes
+#define NIGHT_CHARGE_TIME 0.2 // 100 units/20 seconds  (seconds per unit)
+
 // Global Savedata for player
 TYPEDESCRIPTION CBasePlayer::m_playerSaveData[] =
 	{
 		DEFINE_FIELD(CBasePlayer, m_flFlashLightTime, FIELD_TIME),
 		DEFINE_FIELD(CBasePlayer, m_iFlashBattery, FIELD_INTEGER),
+
+		DEFINE_FIELD(CBasePlayer, m_flNightVisionTime, FIELD_TIME),
+		DEFINE_FIELD(CBasePlayer, m_iNightBattery, FIELD_INTEGER),
 
 		DEFINE_FIELD(CBasePlayer, m_afButtonLast, FIELD_INTEGER),
 		DEFINE_FIELD(CBasePlayer, m_afButtonPressed, FIELD_INTEGER),
@@ -1921,27 +1927,6 @@ void CBasePlayer::PreThink()
 	{
 		pev->velocity = g_vecZero;
 	}
-
-	if( FBitSet( pev->effects, EF_NIGHTVISION ) && pev->armortype > 0 )
-	{
-		UTIL_ScreenFade( this, Vector( 0, 255, 0 ), 0.1f, 0.0f, 255, FFADE_IN | FFADE_MODULATE );
-
-		MESSAGE_BEGIN(MSG_ONE, SVC_TEMPENTITY, NULL, pev );
-			WRITE_BYTE(TE_DLIGHT);
-			WRITE_COORD( pev->origin.x );	// X
-			WRITE_COORD( pev->origin.y );	// Y
-			WRITE_COORD( pev->origin.z );	// Z
-			WRITE_BYTE( 255 );				// radius * 0.1
-			WRITE_BYTE( 255 );				// r
-			WRITE_BYTE( 255 );				// g
-			WRITE_BYTE( 255 );				// b
-			WRITE_BYTE( 2 );				// time * 10
-			WRITE_BYTE( 2 );				// decay * 0.1
-		MESSAGE_END();
-
-		if( m_fNightVision > 0 )
-			m_fNightVision--;
-	}
 }
 /* Time based Damage works as follows: 
 	1) There are several types of timebased damage:
@@ -2859,6 +2844,9 @@ void CBasePlayer::Spawn()
 	m_iFlashBattery = 99;
 	m_flFlashLightTime = 1; // force first message
 
+	m_iNightBattery = 99;
+	m_flNightVisionTime = 1; // force first message
+
 	// dont let uninitialized value here hurt the player
 	m_flFallVelocity = 0;
 
@@ -3316,27 +3304,23 @@ bool CBasePlayer::FlashlightIsOn()
 	return FBitSet(pev->effects, EF_DIMLIGHT);
 }
 
-
 void CBasePlayer::FlashlightTurnOn()
 {
 	if (!g_pGameRules->FAllowFlashlight())
-	{
 		return;
-	}
 
-	if (HasSuit())
-	{
-		EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, SOUND_FLASHLIGHT_ON, 1.0, ATTN_NORM, 0, PITCH_NORM);
-		SetBits(pev->effects, EF_DIMLIGHT);
-		MESSAGE_BEGIN(MSG_ONE, gmsgFlashlight, NULL, pev);
-		WRITE_BYTE(1);
-		WRITE_BYTE(m_iFlashBattery);
-		MESSAGE_END();
+	if (!HasSuit())
+		return;
 
-		m_flFlashLightTime = FLASH_DRAIN_TIME + gpGlobals->time;
-	}
+	EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, SOUND_FLASHLIGHT_ON, 1.0, ATTN_NORM, 0, PITCH_NORM);
+	SetBits(pev->effects, EF_DIMLIGHT);
+	MESSAGE_BEGIN(MSG_ONE, gmsgFlashlight, NULL, pev);
+	WRITE_BYTE(1);
+	WRITE_BYTE(m_iFlashBattery);
+	MESSAGE_END();
+
+	m_flFlashLightTime = FLASH_DRAIN_TIME + gpGlobals->time;
 }
-
 
 void CBasePlayer::FlashlightTurnOff()
 {
@@ -3350,26 +3334,35 @@ void CBasePlayer::FlashlightTurnOff()
 	m_flFlashLightTime = FLASH_CHARGE_TIME + gpGlobals->time;
 }
 
-/*
-	-Mikk Toggles the night vision
-*/
-void CBasePlayer::NightVisionToggle()
+bool CBasePlayer::NightvisionIsOn()
 {
-	if( m_fNightVision > 0 )
-		return;
-	
-	if( FBitSet( pev->effects, EF_NIGHTVISION ) )
-	{
-		EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "player/glass1.wav", 1.0, ATTN_NORM, 0, PITCH_NORM);
-		ClearBits( pev->effects, EF_NIGHTVISION );
-	}
-	else
-	{
-		EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "player/glass2.wav", 1.0, ATTN_NORM, 0, PITCH_NORM);
-		SetBits( pev->effects, EF_NIGHTVISION );
-	}
+	return FBitSet(pev->effects, EF_NIGHTVISION);
+}
 
-	m_fNightVision = gpGlobals->time + 0.5f;
+void CBasePlayer::NightvisionTurnOn()
+{
+	if (!g_pGameRules->FAllowFlashlight())
+		return;
+
+	if (!HasSuit())
+		return;
+
+	EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, SOUND_NIGHTVISION_ON, 1.0, ATTN_NORM, 0, PITCH_NORM);
+	SetBits(pev->effects, EF_NIGHTVISION);
+	MESSAGE_BEGIN(MSG_ONE, gmsgNightvision, NULL, pev);
+	WRITE_BYTE(1);
+	WRITE_BYTE(m_iNightBattery);
+	MESSAGE_END();
+}
+
+void CBasePlayer::NightvisionTurnOff()
+{
+	EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, SOUND_NIGHTVISION_OFF, 1.0, ATTN_NORM, 0, PITCH_NORM);
+	ClearBits(pev->effects, EF_NIGHTVISION);
+	MESSAGE_BEGIN(MSG_ONE, gmsgNightvision, NULL, pev);
+	WRITE_BYTE(0);
+	WRITE_BYTE(m_iNightBattery);
+	MESSAGE_END();
 }
 
 /*
@@ -3446,7 +3439,6 @@ void CBasePlayer::ImpulseCommands()
 		break;
 	}
 	case 100:
-		// temporary flashlight for level designers
 		if (FlashlightIsOn())
 		{
 			FlashlightTurnOff();
@@ -3458,7 +3450,14 @@ void CBasePlayer::ImpulseCommands()
 		break;
 
 	case 108:
-		NightVisionToggle();
+		if (NightvisionIsOn())
+		{
+			NightvisionTurnOff();
+		}
+		else
+		{
+			NightvisionTurnOn();
+		}
 		break;
 
 	case 201: // paint decal
@@ -4136,6 +4135,23 @@ void CBasePlayer::UpdateClientData()
 		}
 	}
 
+	if (m_bRestored)
+	{
+		// Always tell client about battery state
+		MESSAGE_BEGIN(MSG_ONE, gmsgNightBattery, NULL, pev);
+		WRITE_BYTE(m_iNightBattery);
+		MESSAGE_END();
+
+		// Tell client the nightvision is on
+		if (NightvisionIsOn())
+		{
+			MESSAGE_BEGIN(MSG_ONE, gmsgNightvision, NULL, pev);
+			WRITE_BYTE(1);
+			WRITE_BYTE(m_iNightBattery);
+			MESSAGE_END();
+		}
+	}
+
 	// Update Flashlight
 	if ((0 != m_flFlashLightTime) && (m_flFlashLightTime <= gpGlobals->time))
 	{
@@ -4166,6 +4182,35 @@ void CBasePlayer::UpdateClientData()
 		MESSAGE_END();
 	}
 
+	// Update Nightvision
+	if ((0 != m_flNightVisionTime) && (m_flNightVisionTime <= gpGlobals->time))
+	{
+		if (NightvisionIsOn())
+		{
+			if (0 != m_iNightBattery)
+			{
+				m_flNightVisionTime = FLASH_DRAIN_TIME + gpGlobals->time;
+				m_iNightBattery--;
+
+				if (0 == m_iNightBattery)
+					NightvisionTurnOff();
+			}
+		}
+		else
+		{
+			if (m_iNightBattery < 100)
+			{
+				m_flNightVisionTime = FLASH_CHARGE_TIME + gpGlobals->time;
+				m_iNightBattery++;
+			}
+			else
+				m_flNightVisionTime = 0;
+		}
+
+		MESSAGE_BEGIN(MSG_ONE, gmsgNightBattery, NULL, pev);
+		WRITE_BYTE(m_iNightBattery);
+		MESSAGE_END();
+	}
 
 	if ((m_iTrain & TRAIN_NEW) != 0)
 	{

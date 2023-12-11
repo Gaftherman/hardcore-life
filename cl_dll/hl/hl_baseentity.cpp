@@ -261,6 +261,9 @@ void CBasePlayer::SelectPrevItem(int iItem) {}
 bool CBasePlayer::FlashlightIsOn() { return false; }
 void CBasePlayer::FlashlightTurnOn() {}
 void CBasePlayer::FlashlightTurnOff() {}
+bool CBasePlayer::NightvisionIsOn() { return false; }
+void CBasePlayer::NightvisionTurnOn() {}
+void CBasePlayer::NightvisionTurnOff() {}
 void CBasePlayer::ForceClientDllUpdate() {}
 void CBasePlayer::ImpulseCommands() {}
 void CBasePlayer::CheatImpulseCommands(int iImpulse) {}

@@ -33,6 +33,8 @@
 hud_player_info_t g_PlayerInfoList[MAX_PLAYERS_HUD + 1];	// player info from the engine
 extra_player_info_t g_PlayerExtraInfo[MAX_PLAYERS_HUD + 1]; // additional player info sent directly to the client dll
 
+int giR, giG, giB;
+
 class CHLVoiceStatusHelper : public IVoiceStatusHelper
 {
 public:
@@ -361,6 +363,7 @@ void CHud::Init()
 	m_Train.Init();
 	m_Battery.Init();
 	m_Flash.Init();
+	m_Night.Init();
 	m_Message.Init();
 	m_StatusBar.Init();
 	m_DeathNotice.Init();
@@ -504,6 +507,7 @@ void CHud::VidInit()
 	m_Train.VidInit();
 	m_Battery.VidInit();
 	m_Flash.VidInit();
+	m_Night.VidInit();
 	m_Message.VidInit();
 	m_StatusBar.VidInit();
 	m_DeathNotice.VidInit();
